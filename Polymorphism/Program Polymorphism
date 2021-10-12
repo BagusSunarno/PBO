@@ -1,0 +1,167 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Polymorphism
+{
+    public interface Payable
+    {
+        decimal HitungJumlahPembayaran();
+    }
+    public class Faktur : Payable
+    {
+        private string BagianNomor;
+        private string BagianDeskripsi;
+        private int Kuantitas;
+        private decimal HargaPerItem;
+
+        public Faktur(string bagianNomor, string bagianDeskripsi, int kuantitas, decimal hargaPerItem)
+        {
+            BagianNomor = bagianNomor;
+            BagianDeskripsi = bagianDeskripsi;
+            Kuantitas = kuantitas;
+            HargaPerItem = hargaPerItem;
+        }
+        public string BagianNomor2
+        {
+            get
+            {
+                return BagianNomor;
+            }
+            set
+            {
+                BagianNomor = value;
+            }
+        }
+        public string BagianDeskripsi2
+        {
+            get
+            {
+                return BagianDeskripsi;
+            }
+            set
+            {
+                BagianDeskripsi = value;
+            }
+        }
+        public int Kuantitas2
+        {
+            get
+            {
+                return Kuantitas;
+            }
+            set
+            {
+                Kuantitas = (value < 0) ? 0 : value;
+            }
+        }
+        public decimal HargaPerItem2
+        {
+            get
+            {
+                return HargaPerItem;
+            }
+            set
+            {
+                HargaPerItem = (value < 0) ? 0 : value;
+            }
+        }
+        public override string ToString()
+        {
+            return string.Format("{0}: \n{1}: {2} ({3}) \n{4}: {5} \n{6}: {7:C}", "faktur", "Bagian Nomor", BagianNomor, "Bagian Deskripsi", BagianDeskripsi, "Kuantitas", Kuantitas, "Harga per item", HargaPerItem);
+        }
+        public decimal HitungJumlahPembayaran()
+        {
+            return Kuantitas * HargaPerItem;
+        }
+    }
+    public abstract class Karyawan : Payable
+    {
+        private string NamaDepan;
+        private string NamaBelakang;
+        private string NomorSSN;
+        public Karyawan(string namaDepan, string namaBelakang, string nomoSSN)
+        {
+            NamaDepan = namaDepan;
+            NamaBelakang = namaBelakang;
+            NomorSSN = nomoSSN;
+        }
+        public string NamaDepan2
+        {
+            get
+            {
+                return NamaDepan;
+            }
+        }
+        public string NamaBelakang2
+        {
+            get
+            {
+                return NamaBelakang;
+            }
+        }
+        public string NomorSSN2
+        {
+            get
+            {
+                return NomorSSN;
+            }
+        }
+        public override string ToString()
+        {
+            return string.Format("{0} {1}\nNomor SSN : {2}", NamaDepan, NamaBelakang, NomorSSN);
+        }
+        public abstract decimal HitungJumlahPembayaran();
+    }
+    public class GajiKaryawan : Karyawan
+    {
+        private decimal gajiMingguan;
+
+        public GajiKaryawan(string namaDepan, string namaBelakang, string nomoSSN, decimal gaji)
+            : base(namaDepan, namaBelakang, nomoSSN)
+        {
+            GajiMingguan = gaji;
+        }
+        public decimal GajiMingguan
+        {
+            get
+            {
+                return gajiMingguan;
+            }
+            set
+            {
+                gajiMingguan = ((value >= 0) ? value : 0);
+            }
+        }
+        public override decimal HitungJumlahPembayaran()
+        {
+            return GajiMingguan;
+        }
+        public override string ToString()
+        {
+            return string.Format("Gaji karyawan : {0}\n{1}: {2:C}", base.ToString(), "gaji mingguan", GajiMingguan);
+        }
+    }
+    public class PayableInterfaceTest
+    {
+        static void Main(string[] args)
+        {
+            Payable[] payableObjects = new Payable[4];
+
+            payableObjects[0] = new Faktur("01234", "seat", 2, 375.00M);
+            payableObjects[1] = new Faktur("56789", "tire", 4, 79.95M);
+            payableObjects[2] = new GajiKaryawan("John", "Smith", "111-11-1111", 800.00M);
+            payableObjects[3] = new GajiKaryawan("Lisa", "Barnes", "888-88-8888", 1200.00M);
+
+            Console.WriteLine("Faktur dan Karyawan akan diproses secara polymorphisme");
+
+            foreach (Payable currentPayable in payableObjects)
+            {
+                Console.WriteLine("{0} \n{1}: {2:C}\n", currentPayable, "tanggal jatuh tempo", currentPayable.HitungJumlahPembayaran());
+            }
+            Console.ReadLine();
+        }
+    }
+}
